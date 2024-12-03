@@ -7,6 +7,11 @@ import glob
 
 # Paths
 model_path = "best.pt"
+
+# for signle image training
+# image_folder = "dataset/RGBD/images/single_image"
+
+# for multiple image training
 image_folder = "dataset/RGBD/images/train"
 
 # Get all images in the folder
@@ -83,6 +88,8 @@ for image_path in image_paths:
     rewards_per_image.append(np.mean(rewards_per_episode))
     print(f"Finished training on {image_path}: Avg Reward = {np.mean(rewards_per_episode):.2f}")
 
+# Save the Q-table
+np.save("q_table.npy", q_table)
 # Plot training rewards
 plt.plot(range(len(rewards_per_image)), rewards_per_image)
 plt.xlabel("Image Index")
@@ -90,5 +97,4 @@ plt.ylabel("Average Reward")
 plt.title("Training Progress Across Images")
 plt.show()
 
-# Save the Q-table
-np.save("q_table.npy", q_table)
+

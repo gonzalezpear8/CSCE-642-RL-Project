@@ -1,14 +1,20 @@
 # CSCE-642-RL-Project
-A brief description of your project.
-# Setup Instructions
-Steps to install dependencies and run the project.
-# Installation
-pip install -r requirements.txt
 
-# Usage Instructions:
-How to run YOLO inference (e.g., python yolo_inference.py --image path/to/image).
+A project demonstrating the use of Q-Learning Reinforcement Learning (RL) to train an agent in a grid-based environment derived from real-world images.
 
-# How to train and evaluate the RL agent.
-  Expected Output:
-# Describe what the user should expect when running the code.
-# Any known issues or limitations.
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+- Python 3.9.10 is required.
+- Ensure you have all necessary dependencies installed.
+
+### Installation
+
+1. Clone the repository.
+2. Navigate to the project root directory.
+3. Run the following command to install dependencies:
+   ```bash
+   pip install -r requirements.txt```

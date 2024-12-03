@@ -1,28 +1,36 @@
+import argparse
 from ultralytics import YOLO
 import cv2
 import torch
-# load YOLOv8 model
-def predict_image (model_path,image_path):   #thia is for image
-    list = []
+
+def predict_image(model_path, image_path):
+    """
+    Perform YOLO inference on a single image.
+    """
+    detections = []
     model = YOLO(model_path)
-    # read the img
     img = cv2.imread(image_path)
-    # predict
+    
+    # Perform prediction
     results = model(img)
-    # print result
-    xywh = results[0].boxes.xywh.cpu()
-    cls = results[0].boxes.cls.cpu()
-    combined = torch.cat((xywh, cls.unsqueeze(1)), dim=1)   #combined is a tensor, it has 5 column, is the xy center of the box,width, high,and class(1 is hen,0 is egg),
+    xywh = results[0].boxes.xywh.cpu()  # Bounding boxes
+    cls = results[0].boxes.cls.cpu()   # Class labels
 
+    # Combine bounding boxes and class labels
+    combined = torch.cat((xywh, cls.unsqueeze(1)), dim=1)
     for i in range(combined.size(0)):
-        grid_x = int((combined[i, 0] / 848)*16)
-        grid_y = int((combined[i, 1] / 480)*16)
+        grid_x = int((combined[i, 0] / 848) * 16)  # Normalize to 16x16 grid
+        grid_y = int((combined[i, 1] / 480) * 16)
         classes = int(combined[i, -1])
-        list.append({"grid_x": grid_x, "grid_y": grid_y, "class": classes})
-    print (list)
-    return list
+        detections.append({"grid_x": grid_x, "grid_y": grid_y, "class": classes})
+    
+    print("Detections:", detections)
+    return detections
 
-def predict_video (model_path,video_path):  #this is for video
+def predict_video(model_path, video_path):
+    """
+    Perform YOLO inference on a video.
+    """
     model = YOLO(model_path)
     cap = cv2.VideoCapture(video_path)
     while cap.isOpened():
@@ -30,11 +38,36 @@ def predict_video (model_path,video_path):  #this is for video
         if not ret:
             break
         results = model(frame)
-        xywh = results[0].boxes.xywh.cpu()
-        cls = results[0].boxes.cls.cpu()
-        combined = torch.cat((xywh, cls.unsqueeze(1)), dim=1)  #combined is a tensor, it has 5 column, is the xy center of the box,width, high,and class(1 is hen,0 is egg),
-        print(combined)
+        xywh = results[0].boxes.xywh.cpu()  # Bounding boxes
+        cls = results[0].boxes.cls.cpu()   # Class labels
 
-# predict_image(r'D:\Python_Project\chicken_detected\runs\pose\train30\weights\best.pt',
-#               r"D:\Python_Project\chicken_detected\data\depth\early_fusion\RGBD\images\train\20240226_082700_png.rf.b30afe849dd28d3eea6bfb61c7ba229f_rb.jpg"
-#               )
+        combined = torch.cat((xywh, cls.unsqueeze(1)), dim=1)
+        detections = []
+        for i in range(combined.size(0)):
+            grid_x = int((combined[i, 0] / 848) * 16)  # Normalize to 16x16 grid
+            grid_y = int((combined[i, 1] / 480) * 16)
+            classes = int(combined[i, -1])
+            detections.append({"grid_x": grid_x, "grid_y": grid_y, "class": classes})
+        
+        print("Detections:", detections)
+
+def main():
+    parser = argparse.ArgumentParser(description="YOLO Inference for Images or Videos")
+    parser.add_argument("--image", type=str, help="Path to the image file")
+    parser.add_argument("--video", type=str, help="Path to the video file")
+    parser.add_argument("--model", type=str, required=True, help="Path to the YOLO model file (e.g., best.pt)")
+
+    args = parser.parse_args()
+
+    if args.image:
+        print(f"Running YOLO on image: {args.image}")
+        predict_image(args.model, args.image)
+    elif args.video:
+        print(f"Running YOLO on video: {args.video}")
+        predict_video(args.model, args.video)
+    else:
+        print("Error: You must provide either an --image or --video argument.")
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
