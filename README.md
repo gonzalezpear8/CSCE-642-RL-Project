@@ -38,7 +38,7 @@ Train the RL agent using the following command:
    python train_agent.py
 ```
 
-##### Important: Inside the `train_agent.py` file, modify the `image_folder` variable to specify the folder containing the images you want to train on.
+##### Important: Inside the `train_agent.py` file, modify the `input_path` variable to specify the folder containing the images you want to train on.
 ---
 #### How to Train and Evaluate the RL Agent
 1. Training: Use `train_agent.py` to train the RL agent on your chosen dataset.

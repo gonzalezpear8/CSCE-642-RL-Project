@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class RLGridEnvironment:
-    # Other methods...
-
     def animate_path(self, path, save_as=None):
         fig, ax = plt.subplots()
         grid = np.zeros(self.grid_size, dtype=int)
@@ -25,13 +23,14 @@ class RLGridEnvironment:
 
         # Save the animation if save_as is provided
         if save_as:
+            print(f"Saving animation to {save_as}")
             if save_as.endswith(".mp4"):
                 writer = animation.FFMpegWriter(fps=2, metadata=dict(artist="RL Agent"))
                 ani.save(save_as, writer=writer)
-                print(f"Animation saved as {save_as}")
             elif save_as.endswith(".gif"):
                 writer = animation.PillowWriter(fps=2)
                 ani.save(save_as, writer=writer)
-                print(f"Animation saved as {save_as}")
+            else:
+                print("Unsupported file format. Use .mp4 or .gif.")
         else:
             plt.show()
